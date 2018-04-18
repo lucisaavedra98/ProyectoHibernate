@@ -1,7 +1,10 @@
 package es.ProyectoHibernate.repositorio;
 
+import java.util.List;
+
 import org.hibernate.Session;
 
+import es.ProyectoHibernate.modelo.EstadoCivil;
 import es.ProyectoHibernate.modelo.Persona;
 import es.ProyectoHibernate.util.HibernateUtil;
 
@@ -112,4 +115,51 @@ public class RepositorioPersona {
 			sesion.close();
 		}
 	}
+	
+	public static List<Persona> consultar (String nombre,String apellidos,String dni,EstadoCivil estadoCivil) {
+		final Session sesion = HibernateUtil.getMiFactoria().getCurrentSession();
+
+		try {
+			sesion.getTransaction().begin();
+
+			final StringBuilder sb = new StringBuilder("from Persona where 1=1 ");
+			if (nombre!= null && !nombre.isEmpty()) { 
+				sb.append(" and PER_NOM like :nombre ");
+			}
+			if (apellidos!=null && !apellidos.isEmpty()) {
+				sb.append(" and PER_APE LIKE :apellidos ");
+			}
+			if (dni!=null && !dni.isEmpty()) {
+				sb.append(" and PER_DNI = :dni ");
+			}
+			if (estadoCivil != null) {
+				sb.append(" and PER_ECV = :estadoCivil ");
+			}			
+			
+			final org.hibernate.query.Query<Persona> consulta = sesion.createQuery(sb.toString());
+			if(nombre!= null && !nombre.isEmpty()) {
+			consulta.setParameter("nombre", nombre);
+			}
+			if(apellidos!=null && !apellidos.isEmpty()) {
+				consulta.setParameter("apellidos", apellidos);
+				}
+			if(dni!=null && !dni.isEmpty()) {
+				consulta.setParameter("dni", dni);
+				}
+			if(estadoCivil != null) {
+				consulta.setParameter("estadoCivil", estadoCivil.ordinal());
+				}
+			
+			return consulta.list();
+
+		} catch (Exception e) {
+			System.out.println("Se ha producido un error al obtener registros "+e.getMessage());
+			sesion.getTransaction().rollback();
+			throw new RuntimeException();
+		}
+		finally {
+			sesion.close();
+		}
+	}
+	
 }

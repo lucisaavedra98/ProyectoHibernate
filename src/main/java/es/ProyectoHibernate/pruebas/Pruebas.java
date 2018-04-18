@@ -1,5 +1,8 @@
 package es.ProyectoHibernate.pruebas;
 
+import java.util.Arrays;
+import java.util.List;
+
 import es.ProyectoHibernate.modelo.AtaquesPersonaje;
 import es.ProyectoHibernate.modelo.EstadoCivil;
 import es.ProyectoHibernate.modelo.Persona;
@@ -15,9 +18,10 @@ public class Pruebas {
 		//modificarPersona2();
 		//modificarPersona3();
 		//eliminarPersona();
+		consultarPersona("Luciano","Saavedra Conejo","17481797A",EstadoCivil.SOLTERO);
 		//System.out.println(crearPersonaje());
 		//modificarPersonaje();
-		eliminarPersonaje();
+		//eliminarPersonaje();
 	}
 	
 	private static Integer crearPersona() {
@@ -53,6 +57,11 @@ public class Pruebas {
 	
 	private static void eliminarPersona() {
 		RepositorioPersona.eliminarPersona(9);
+	}
+	
+	private static void consultarPersona(String nombre,String apellidos,String dni,EstadoCivil estadoCivil) {
+		final List<Persona> personas = RepositorioPersona.consultar(nombre,apellidos,dni,estadoCivil);
+		System.out.println(personas.size());
 	}
 	
 	private static Integer crearPersonaje() {
