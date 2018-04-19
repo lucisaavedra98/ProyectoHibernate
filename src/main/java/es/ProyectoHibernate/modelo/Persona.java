@@ -1,23 +1,27 @@
 package es.ProyectoHibernate.modelo;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.ManyToMany;
+import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
-@Entity
+@Entity(name = "Persona")
 @Table(name = "A_PER")
-public class Persona implements Serializable{
-
-	@Id
-	@GeneratedValue
-	@Column(name = "PER_ID")
-	private int idPersona;
+public class Persona extends Usuario{
 
 	@Column(name = "PER_NOM", nullable = false, length = 50)
 	private String nombre;
@@ -35,16 +39,17 @@ public class Persona implements Serializable{
 	@Enumerated
 	private EstadoCivil estadoCivil;
 
+	@ManyToMany(cascade = CascadeType.ALL)
+	private List<Direccion> direcciones = new ArrayList<>();
+	
+	@OneToMany(mappedBy = "persona", cascade = CascadeType.ALL, orphanRemoval = true)
+	private Set<Telefono> telefonos = new HashSet();
+	
+	@OneToOne(mappedBy = "persona", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    private DetallesPersona detalles;
+	
 	public Persona() {
 
-	}
-
-	public int getIdPersona() {
-		return idPersona;
-	}
-
-	public void setIdPersona(int idPersona) {
-		this.idPersona = idPersona;
 	}
 
 	public String getNombre() {
@@ -87,4 +92,50 @@ public class Persona implements Serializable{
 		this.estadoCivil = estadoCivil;
 	}
 
+	public List<Direccion> getDirecciones() {
+		return direcciones;
+	}
+
+	public void setDirecciones(List<Direccion> direcciones) {
+		this.direcciones = direcciones;
+	}
+	
+	public Set<Telefono> getTelefonos() {
+		return telefonos;
+	}
+
+	public void setTelefonos(Set<Telefono> telefonos) {
+		this.telefonos = telefonos;
+	}
+	
+	public DetallesPersona getDetalles() {
+		return detalles;
+	}
+
+	public void setDetalles(DetallesPersona detalles) {
+		this.detalles = detalles;
+	}
+
+	public void agregarDireccion(Direccion direccion) {
+        direcciones.add( direccion );
+        direccion.getPropietarios().add(this);
+    }
+
+    public void eliminarDirecciones() {
+        direcciones.removeAll(getDirecciones());
+    }
+
+    public void agregarTelefono(Telefono telefono) {
+        telefonos.add(telefono);
+        telefono.setPersona( this );
+    }
+
+    public void eliminarTelefonos() {
+        telefonos.removeAll(getTelefonos());
+    }
+    
+    public void agregarDetalles(DetallesPersona detalles) {
+        detalles.setPersona( this );
+        this.detalles = detalles;
+    }
 }

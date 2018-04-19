@@ -6,9 +6,10 @@ import org.hibernate.Session;
 
 import es.ProyectoHibernate.modelo.EstadoCivil;
 import es.ProyectoHibernate.modelo.Persona;
+import es.ProyectoHibernate.modelo.Cliente;
 import es.ProyectoHibernate.util.HibernateUtil;
 
-public class RepositorioPersona {
+public class RepositorioPersona extends RepositorioUsuario{
 
 	public static Integer crearPersona(final Persona persona) {
 		final Session sesion = HibernateUtil.getMiFactoria().getCurrentSession();
@@ -29,7 +30,7 @@ public class RepositorioPersona {
 		finally {
 			sesion.close();
 		}
-	}
+	}	
 	
 	public static void modificarPersona(final Integer idPersona,final String nombre) {
 		final Session sesion = HibernateUtil.getMiFactoria().getCurrentSession();
@@ -60,7 +61,7 @@ public class RepositorioPersona {
 		try {
 			sesion.getTransaction().begin();
 
-			sesion.createQuery("Update Persona set per_ape = :apellidos where per_id = :identificador").
+			sesion.createQuery("Update Persona set per_ape = :apellidos where usu_id = :identificador").
 			setParameter("apellidos", apellidos).setParameter("identificador", idPersona).executeUpdate();
 
 			sesion.getTransaction().commit();
@@ -95,19 +96,18 @@ public class RepositorioPersona {
 		}
 	}
 	
-	public static void eliminarPersona (final Integer idPersona) {
+	public static void eliminarUsuario (Persona persona) {
 		final Session sesion = HibernateUtil.getMiFactoria().getCurrentSession();
 
 		try {
 			sesion.getTransaction().begin();
 
-			sesion.createQuery("delete Persona where per_id= :idPersona ").setParameter("idPersona", idPersona).
-			executeUpdate();
+			sesion.delete(persona);
 			
 			sesion.getTransaction().commit();
 
 		} catch (Exception e) {
-			System.out.println("Se ha producido un error modificando la persona "+e.getMessage());
+			System.out.println("Se ha producido un error al eliminar el usuario "+e.getMessage());
 			e.printStackTrace();
 			throw new RuntimeException();
 		}
