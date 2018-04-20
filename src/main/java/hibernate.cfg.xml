@@ -14,7 +14,10 @@
 		<property name="hibernate.current_session_context_class">thread</property>
 		<property name="hibernate.show_sql">true</property>
 		<property name="hibernate.dialect">org.hibernate.dialect.SQLServerDialect</property>
+		<property name="hibernate.cache.region.factory_class">org.hibernate.cache.jcache.JCacheRegionFactory</property>
+		<property name="hibernate.javax.cache.provider">org.ehcache.jsr107.EhcacheCachingProvider</property>
 		<property name="hibernate.hbm2ddl.auto">create</property>
+		
 		<mapping class="es.ProyectoHibernate.modelo.Persona" />
 		<mapping class="es.ProyectoHibernate.modelo.Cliente" />
 		<mapping class="es.ProyectoHibernate.modelo.Personaje" />
@@ -22,5 +25,7 @@
 		<mapping class="es.ProyectoHibernate.modelo.Direccion" />
 		<mapping class="es.ProyectoHibernate.modelo.Telefono" />
 		<mapping class="es.ProyectoHibernate.modelo.DetallesPersona" />
+		<mapping class="es.ProyectoHibernate.modelo.Aficion" />
+		<mapping class="es.ProyectoHibernate.modelo.Genero" />
 	</session-factory>
 </hibernate-configuration>

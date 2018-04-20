@@ -3,8 +3,10 @@ package es.ProyectoHibernate.pruebas;
 import java.util.Date;
 import java.util.List;
 
+import es.ProyectoHibernate.modelo.Aficion;
 import es.ProyectoHibernate.modelo.AtaquesPersonaje;
 import es.ProyectoHibernate.modelo.EstadoCivil;
+import es.ProyectoHibernate.modelo.Genero;
 import es.ProyectoHibernate.modelo.Persona;
 import es.ProyectoHibernate.modelo.Cliente;
 import es.ProyectoHibernate.modelo.DetallesPersona;
@@ -19,11 +21,12 @@ import es.ProyectoHibernate.repositorio.RepositorioUsuario;
 public class Pruebas {
 
 	public static void main(String[] args) {
-		System.out.println(crearPersona("17281797A","usuaio"));
-//		System.out.println(crearPersona("17381797B","usuaio2"));
+		System.out.println(crearPersona("17281797A","usuario"));
+		//System.out.println(crearPersona("17381797B","usuario2"));
 //		System.out.println(crearCliente("17281797A","usu"));
 //		System.out.println(crearCliente("27281797B","usu2"));
-		eliminar();
+		consultarPersona(1);
+		//eliminar(1);
 		//modificarPersona();
 		//modificarPersona2();
 		//modificarPersona3();
@@ -44,7 +47,7 @@ public class Pruebas {
 		persona.setLogin(login);
 		persona.setPassword("usuario");
 		persona.setFechaAlta(new Date());
-		
+		persona.setGenero(Genero.MASCULINO);
 		final Direccion direccion = new Direccion();
 		direccion.setBloque(1);
 		direccion.setCalle("San Pablo");
@@ -65,7 +68,6 @@ public class Pruebas {
 		telefono2.setNumero("17218312");
 		
 		final DetallesPersona detalles= new DetallesPersona(true,true,true);
-		
 		
 		persona.agregarDireccion(direccion);
 		persona.agregarDireccion(direccion2);
@@ -99,13 +101,19 @@ public class Pruebas {
 		RepositorioPersona.modificarPersona3(persona);
 	}
 
-	private static void eliminar(Persona persona) {
-		RepositorioPersona.eliminarUsuario(persona);
+	private static void eliminar(Integer idUsuario) {
+		RepositorioPersona.eliminarPersona(idUsuario);
 	}
 	
 	private static void consultarPersona(String nombre,String apellidos,String dni,EstadoCivil estadoCivil) {
 		final List<Persona> personas = RepositorioPersona.consultar(nombre,apellidos,dni,estadoCivil);
 		System.out.println(personas.size());
+	}
+	
+	private static void consultarPersona(Integer idPersona) {
+		final Persona personaEncontrada = RepositorioPersona.consultar(idPersona);
+		
+		//personaEncontrada.getTelefonos().stream().forEach(telefono -> System.out.println(telefono.getNumero()));
 	}
 	
 	private static Integer crearCliente(String dni, String login) {

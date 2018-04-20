@@ -8,6 +8,7 @@ import java.util.Set;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
+import javax.persistence.Convert;
 import javax.persistence.Entity;
 import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
@@ -17,7 +18,14 @@ import javax.persistence.Id;
 import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
+import javax.persistence.OrderBy;
+import javax.persistence.OrderColumn;
 import javax.persistence.Table;
+
+import org.hibernate.annotations.SortComparator;
+import org.hibernate.annotations.SortNatural;
+
+import es.ProyectoHibernate.conversores.ConversorGenero;
 
 @Entity(name = "Persona")
 @Table(name = "A_PER")
@@ -43,10 +51,18 @@ public class Persona extends Usuario{
 	private List<Direccion> direcciones = new ArrayList<>();
 	
 	@OneToMany(mappedBy = "persona", cascade = CascadeType.ALL, orphanRemoval = true)
+	@OrderBy("TEL_NUM")
 	private Set<Telefono> telefonos = new HashSet();
 	
 	@OneToOne(mappedBy = "persona", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private DetallesPersona detalles;
+	
+	@ManyToMany(cascade= {CascadeType.PERSIST,CascadeType.REFRESH,CascadeType.MERGE})
+	private List<Aficion> aficiones;
+	
+	@Column(name="PER_GEN",nullable=false,length=1)
+	@Convert(converter=ConversorGenero.class)
+	private Genero genero;
 	
 	public Persona() {
 
@@ -114,6 +130,22 @@ public class Persona extends Usuario{
 
 	public void setDetalles(DetallesPersona detalles) {
 		this.detalles = detalles;
+	}
+	
+	public List<Aficion> getAficiones() {
+		return aficiones;
+	}
+
+	public void setAficiones(List<Aficion> aficiones) {
+		this.aficiones = aficiones;
+	}
+
+	public Genero getGenero() {
+		return genero;
+	}
+
+	public void setGenero(Genero genero) {
+		this.genero = genero;
 	}
 
 	public void agregarDireccion(Direccion direccion) {

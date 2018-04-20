@@ -1,17 +1,31 @@
 package es.ProyectoHibernate.modelo;
 
+import java.io.Serializable;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
+import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.persistence.TableGenerator;
 
 @Entity(name = "Telefono")
 @Table(name = "A_TEL")
-public class Telefono {
+public class Telefono implements Serializable{
 	@Id
-	@GeneratedValue
+	@GeneratedValue(
+		        strategy = GenerationType.SEQUENCE,
+		        generator = "sequence-generator"
+		    )
+	@SequenceGenerator(
+		        name = "sequence-generator",
+		        sequenceName = "sequenciaDeTelefonos",
+		        initialValue=1,
+		        allocationSize = 1
+		    )
 	@Column(name = "TEL_ID", nullable = false, unique=true)
 	private int idTelefono;
 
@@ -47,4 +61,5 @@ public class Telefono {
 	public void setPersona(Persona persona) {
 		this.persona = persona;
 	}
+
 }

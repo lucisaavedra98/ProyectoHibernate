@@ -96,19 +96,44 @@ public class RepositorioPersona extends RepositorioUsuario{
 		}
 	}
 	
-	public static void eliminarUsuario (Persona persona) {
+	public static void eliminarPersona (final Integer idUsuario) {
 		final Session sesion = HibernateUtil.getMiFactoria().getCurrentSession();
 
 		try {
 			sesion.getTransaction().begin();
 
-			sesion.delete(persona);
+			final Persona personaBBDD = (Persona) sesion.createQuery("from Usuario Usu where Usu.idUsuario = :idUsuario ").setParameter("idUsuario", idUsuario).
+			uniqueResult();
+			
+			sesion.delete(personaBBDD);
 			
 			sesion.getTransaction().commit();
 
 		} catch (Exception e) {
 			System.out.println("Se ha producido un error al eliminar el usuario "+e.getMessage());
 			e.printStackTrace();
+			throw new RuntimeException();
+		}
+		finally {
+			sesion.close();
+		}
+	}
+	
+	public static Persona consultar (Integer idPersona) {
+		final Session sesion = HibernateUtil.getMiFactoria().getCurrentSession();
+
+		try {
+			sesion.getTransaction().begin();
+
+			Persona persona = (Persona) sesion.createQuery("from Usuario Usu where Usu.idUsuario = :idPersona")
+					.setParameter("idPersona", idPersona).uniqueResult();
+			persona.getTelefonos().stream().forEach(telefono -> System.out.println(telefono.getNumero()));
+			
+			return persona;
+
+		} catch (Exception e) {
+			System.out.println("Se ha producido un error al obtener registros "+e.getMessage());
+			sesion.getTransaction().rollback();
 			throw new RuntimeException();
 		}
 		finally {
